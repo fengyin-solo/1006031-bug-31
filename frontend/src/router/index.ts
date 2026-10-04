@@ -15,6 +15,7 @@ const Catering = () => import('@/views/catering/index.vue')
 const Cabin = () => import('@/views/cabin/index.vue')
 const Team = () => import('@/views/team/index.vue')
 const Vehmaint = () => import('@/views/vehmaint/index.vue')
+const VehicleFleet = () => import('@/views/vehiclefleet/index.vue')
 const Vip = () => import('@/views/vip/index.vue')
 const Delay = () => import('@/views/delay/index.vue')
 const Apron = () => import('@/views/apron/index.vue')
@@ -38,6 +39,7 @@ const router = createRouter({
     { path: '/cabin', name: 'cabin', component: Cabin },
     { path: '/team', name: 'team', component: Team },
     { path: '/vehmaint', name: 'vehmaint', component: Vehmaint },
+    { path: '/vehiclefleet', name: 'vehiclefleet', component: VehicleFleet },
     { path: '/vip', name: 'vip', component: Vip },
     { path: '/delay', name: 'delay', component: Delay },
     { path: '/apron', name: 'apron', component: Apron },

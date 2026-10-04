@@ -69,3 +69,30 @@ npm run build
   `frontend/src/data/seed.ts`。
 - 状态流转只允许在 `local-service.ts` 里改，页面组件不做业务判断。
 - 想回到初始数据：清掉浏览器里 `airport-ground-ops:entries` 这一项，或调用 `resetModule(模块)`。
+
+### 特种车辆维保链路
+
+维保记录的全部判定集中在 `frontend/src/data/vehmaint.ts`，页面动作层
+（`views/vehmaint`、`views/vehiclefleet`）与本地数据层（`api/local-service.ts` →
+`data/local-store.ts`）都走同一个门面，不允许各写一份。
+
+- **全链路**：页面动作 → `runAction('vehmaint', …)` → `advanceVehmaint` 判定 →
+  一次 `saveRows` 落库；维保页、运营概览、特种车辆可用清单读取时统一经过
+  `normalizeVehmaintRows` 对齐，写入与读出看到的是同一份结果。
+- **状态与在修标记同一笔落库**：确认出厂时 `status=已出厂`、`inRepair=false`、
+  展示字段「维保状态」一起写齐，页面层不单独清标记，只清页面标记不算修复。
+- **冲突判定依据**：`status` 是记录在状态机里的唯一位置，是权威字段；`inRepair`
+  只是状态的派生冗余值。历史数据出现「已出厂却仍挂在修标记」时一律按状态重算标记。
+- **重复确认出厂只清一次标记**：第一次确认出厂时标记随状态清掉；再次提交直接拒绝
+  受理，不触发第二次写入。
+- **顺序流转**：待进厂 → 维保中 → 待验收 → 已出厂（模块元数据 `strictOrder`）。
+  越级动作挡回并提示缺哪一环，例如待进厂直接确认出厂会提示先完成「送厂维保、提交验收」；
+  重复动作拒绝受理。
+- **在修名单可重建**：`listInRepairVehicles` 从维保记录状态实时派生（维保中、待验收
+  在册；待进厂、已出厂不在册），承修单位回传的维修项目归档、确认出厂后名单随之更新。
+- **可用清单同源**：`views/vehiclefleet` 的特种车辆可用清单与在修名单来自同一派生结果，
+  车辆侧没有第二份数据；维保单号、承修单位、维修项目由 `reconcileVehmaint` 三方对账。
+- **示例数据重置**：维保页在开发环境（`import.meta.env.DEV`）提供「重置维保示例数据」，
+  只重置 `vehmaint` 这一个存储键，其它模块运行数据不受影响；运行数据只存在浏览器
+  localStorage 里，`npm run build` 的产物不携带任何运行数据（仓库内仅打包 `seed.ts`
+  这份示例数据）。
