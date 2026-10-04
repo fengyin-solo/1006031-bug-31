@@ -68,4 +68,10 @@ npm run build
 - 字段、状态、动作与流转目标集中在 `frontend/src/data/modules.ts`；示例数据在
   `frontend/src/data/seed.ts`。
 - 状态流转只允许在 `local-service.ts` 里改，页面组件不做业务判断。
-- 想回到初始数据：清掉浏览器里 `airport-ground-ops:entries` 这一项，或调用 `resetModule(模块)`。
+- 维保记录按 待进厂 → 维保中 → 待验收 → 已出厂 顺序逐级流转，越级与回退都会被拒绝并提示缺哪一环。
+- 在修标记以状态为准：状态不是「已出厂」即在修。状态与标记在同一笔写入里一起更新；
+  在修名单与特种车辆可用清单都由维保记录现算（`listUnderRepair` / `listVehicleAvailability`），
+  不另存副本，车辆侧读到的与维保记录永远是同一份数据。
+- 想回到初始数据：清掉浏览器里 `airport-ground-ops:entries` 这一项，或调用 `resetModule(模块)`
+  （只重置该模块，不影响其他模块的本地数据）。运行数据只存在浏览器 localStorage，
+  构建产物（`dist/`）不包含任何运行数据。

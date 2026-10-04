@@ -155,6 +155,7 @@ export const MODULES: ModuleMeta[] = [
     actions: ["送厂维保", "提交验收", "确认出厂"],
     actionTargets: {"送厂维保": "维保中", "提交验收": "待验收", "确认出厂": "已出厂"},
     metrics: ["待进厂车辆", "维保中车辆", "待验收车辆"],
+    orderedFlow: true,
   },
   {
     key: "vip",
